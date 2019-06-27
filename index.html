@@ -1,0 +1,133 @@
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+     <title>Document</title>
+     <script  src="/face-api.js/dist/face-api.js"></script>
+ <style>
+     body{
+         margin:0;
+         padding: 0;
+         width: 100vh;
+         height: 100vh;
+         /* display:flex;
+         justify-content: center;
+         align-items: center; */
+         position: relative;
+     }
+     canvas {
+         position: absolute;
+         top: 0;
+        left: 0;
+     }
+ </style>
+    </head>
+ <body>
+     <!-- for camera -->
+    <video id="video" width="960" height="720"  muted  autoplay></video>
+   <!-- for video -->
+    <!-- <video id="video" width="1280" height="720" src="/video"  muted  loop>          -->
+
+     <script>
+     var video = document.getElementById('video')
+     var videoWidth =1280
+     var videoHeight = 720
+     /**
+      * webcam için
+      */
+     function startCamera(){
+         navigator.getUserMedia(
+             {video :{} },
+             stream=> video.srcObject = stream,
+             err=> console.error(err)
+         )
+     }
+      /**
+      * load modules
+      */
+     function loadModules(){
+        return  Promise.all([
+                    faceapi.nets.tinyFaceDetector.loadFromUri("/face-api.js/weights"),
+                    faceapi.nets.faceLandmark68Net.loadFromUri("/face-api.js/weights"),
+                    faceapi.nets.faceRecognitionNet.loadFromUri("/face-api.js/weights"),
+                    faceapi.nets.faceExpressionNet.loadFromUri("/face-api.js/weights"),
+        ])
+     }
+    function RunWithCamera(){
+        videoWidth = 960
+        videoHeight = 720
+        video.removeAttribute('loop')
+        video.removeAttribute('src')
+
+        loadModules().then(()=> {
+        console.log("promise loaded..")
+        debugger;
+        faceapi;
+        setTimeout(()=>{
+            startCamera()
+                },1000)
+        
+     })
+    }
+    
+    function RunWithVideo(){
+        videoWidth   = 1280
+        videoHeight  = 720
+        video.width  =  videoWidth
+        video.height = videoHeight
+        video.setAttribute('loop',"")
+        video.setAttribute('src','/video')
+        loadModules().then(()=> {
+        console.log("promises loaded..")
+        debugger;
+        setTimeout( () => {
+            video.play()
+                }, 1000)
+        })
+    }
+   
+     function playHandler(){
+        console.log(faceapi.nets)
+
+        const canvas = faceapi.createCanvasFromMedia(video)
+        debugger;
+        
+        canvas.width = videoWidth
+        canvas.height = videoHeight
+        document.body.append(canvas)
+        const displaySize ={
+            width:videoWidth,
+            height:videoHeight,
+        }
+        faceapi.matchDimensions(canvas, displaySize)
+        debugger
+        console.log("video playing")
+        setInterval (async ()=>{
+            // return;
+            const detections= await faceapi.detectAllFaces(video,
+                new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions()
+            // console.log(detections)
+
+            const resizedDetections  = faceapi.resizeResults(detections, displaySize)
+            
+            //eski çizimi sil
+            canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height)
+
+            //çiz
+            faceapi.draw.drawDetections(canvas, resizedDetections)
+            faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
+            
+
+        }, 99)
+     
+     }
+     video.addEventListener('play',playHandler)
+
+    RunWithCamera()
+    // RunWithVideo()
+
+     </script>
+ </body>
+ </html> 
