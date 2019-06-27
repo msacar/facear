@@ -1,6 +1,9 @@
 # javascript face tracking 
 
 //webserver 
-server.js -> node server.js
+node server.js
+
+//link
+http://localhost:3000
 
 
