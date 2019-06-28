@@ -7,3 +7,5 @@ node server.js
 http://localhost:3000
 
 
+//kullanılan kütüphane 
+https://github.com/justadudewhohacks/face-api.js
