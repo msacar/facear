@@ -1,5 +1,8 @@
 # javascript face tracking 
 
+//install npm 
+npm install
+
 //webserver 
 node server.js
 
