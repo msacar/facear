@@ -26,7 +26,8 @@
     </head>
  <body>
      <!-- for camera -->
-    <video id="video" width="960" height="720"  muted  autoplay></video>
+     <video id="video" width="960" height="720"  muted  autoplay></video>
+     <img style="display:none" src="https://i.pinimg.com/originals/51/11/c8/5111c866ff9f73ab33ced3eb5786e6a7.jpg" alt="">
    <!-- for video -->
     <!-- <video id="video" width="1280" height="720" src="/video"  muted  loop>          -->
 
@@ -34,6 +35,8 @@
      var video = document.getElementById('video')
      var videoWidth =1280
      var videoHeight = 720
+     var interval = null;
+
      /**
       * webcam için
       */
@@ -87,6 +90,19 @@
                 }, 1000)
         })
     }
+  async  function RunWithImage(){
+        const image = await faceapi.fetchImage('https://i.pinimg.com/originals/51/11/c8/5111c866ff9f73ab33ced3eb5786e6a7.jpg')
+
+        console.log(image instanceof HTMLImageElement) // true
+
+        // displaying the fetched image content
+        const myImg = document.getElementById('myImg')
+        myImg.src = image.src
+
+        document.querySelector('video').remove()
+        video = document.querySelector('img') 
+        video.style.display ="block"
+    }
    
      function playHandler(){
         console.log(faceapi.nets)
@@ -104,7 +120,11 @@
         faceapi.matchDimensions(canvas, displaySize)
         debugger
         console.log("video playing")
-        setInterval (async ()=>{
+
+        /**
+         *  Interval görüntüyü işliyor  
+         */
+        interval = setInterval (async () => {
             // return;
             const detections= await faceapi.detectAllFaces(video,
                 new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions()
@@ -118,16 +138,18 @@
             //çiz
             faceapi.draw.drawDetections(canvas, resizedDetections)
             faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
-            
 
         }, 99)
      
      }
+
      video.addEventListener('play',playHandler)
 
     
     //  RunWithCamera()
-      RunWithVideo()
+     RunWithVideo()
+    //henüz tamamlanmadı
+    // RunWithImage()
 
      </script>
  </body>
