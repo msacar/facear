@@ -1,14 +1,15 @@
-# javascript face tracking 
+# Javascript Face Tracking 
 
-//install npm 
+
+
+## Running the Browser Examples
+
+``` bash
 npm install
+npm start
+```
 
-//webserver 
-node server.js
+Browse to http://localhost:3000/.
 
-//link
-http://localhost:3000
-
-
-//kullanılan kütüphane 
+## Kütüphane face-api.js
 https://github.com/justadudewhohacks/face-api.js
